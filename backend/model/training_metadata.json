@@ -1,0 +1,57 @@
+{
+  "target_column": "Average Speed",
+  "target_reasoning": "Average Speed chosen over Congestion Level / Travel Time Index / Road Capacity Utilization because those columns are heavily saturated at their max value (43.5%/58.5%/73.7% of rows respectively), making them poor continuous regression targets. Average Speed is continuous, unclipped, and converts directly to edge travel time for routing (time = distance / speed).",
+  "feature_columns": [
+    "Traffic Volume",
+    "Average Speed",
+    "Congestion Level",
+    "Road Capacity Utilization",
+    "Incident Reports",
+    "Public Transport Usage",
+    "Traffic Signal Compliance",
+    "Parking Usage",
+    "Pedestrian and Cyclist Count",
+    "is_weekend",
+    "is_rush_hour_proxy",
+    "Roadwork_flag",
+    "Weather_Clear",
+    "Weather_Overcast",
+    "Weather_Fog",
+    "Weather_Rain",
+    "Weather_Windy"
+  ],
+  "sequence_length": 10,
+  "sequence_length_reasoning": "Dataset is DAILY and IRREGULARLY sampled per road (gaps of 1-10 days between consecutive observations for the same road; no fixed 5-minute or hourly frequency exists in this data). Sequences are therefore built from the previous N RECORDED observations for a road, not N fixed time units. seq_len=10 was chosen as a balance: large enough to give the LSTM meaningful history, small enough that even the road with the fewest observations (275) still yields hundreds of usable training sequences.",
+  "split": {
+    "method": "chronological, global (70/15/15) by target-row date, no shuffling",
+    "train_size": 6143,
+    "val_size": 1316,
+    "test_size": 1317,
+    "train_date_range": [
+      "2022-01-11 00:00:00",
+      "2023-11-05 00:00:00"
+    ],
+    "val_date_range": [
+      "2023-11-05 00:00:00",
+      "2024-03-21 00:00:00"
+    ],
+    "test_date_range": [
+      "2024-03-21 00:00:00",
+      "2024-08-09 00:00:00"
+    ]
+  },
+  "architecture": "LSTM(64, return_sequences=True) -> Dropout(0.2) -> LSTM(32) -> Dropout(0.2) -> Dense(16, relu) -> Dense(1)",
+  "optimizer": "Adam(lr=1e-3)",
+  "loss": "mse",
+  "epochs_trained": 18,
+  "test_metrics": {
+    "mae_kmh": 8.392277717590332,
+    "rmse_kmh": 10.50765609741211,
+    "r2": 0.01796245574951172
+  },
+  "naive_persistence_baseline": {
+    "mae_kmh": 11.910930633544922,
+    "rmse_kmh": 14.900815963745117
+  },
+  "random_seed": 42
+}

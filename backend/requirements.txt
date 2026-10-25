@@ -1,0 +1,11 @@
+fastapi==0.141.1
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+tensorflow-cpu==2.21.0
+joblib==1.4.2
+matplotlib==3.9.2
+osmnx==2.1.1
+networkx==3.6.1
